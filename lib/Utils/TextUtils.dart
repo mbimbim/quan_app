@@ -5,7 +5,7 @@ import 'ColorsUtils.dart';
 class TextUtils {
   static final TextStyle text_judul = GoogleFonts.poppins().copyWith(
     fontSize: 24,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w700,
     color: ColorUtils.warna_text_judul,
   );
 
@@ -15,10 +15,22 @@ class TextUtils {
     color: ColorUtils.warna_text,
   );
 
+  static final TextStyle text_13_2 = GoogleFonts.poppins().copyWith(
+    fontSize: 13,
+    fontWeight: FontWeight.bold,
+    color: ColorUtils.warna_text_judul,
+  );
+
   static final TextStyle text_14 = GoogleFonts.poppins().copyWith(
     fontSize: 14,
     fontWeight: FontWeight.bold,
     color: ColorUtils.warna_text,
+  );
+
+  static final TextStyle text_14_2 = GoogleFonts.poppins().copyWith(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: ColorUtils.warna_text_judul,
   );
 
   static final TextStyle text_11 = GoogleFonts.poppins().copyWith(

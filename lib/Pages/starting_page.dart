@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quran_app/Pages/home_page.dart';
 import 'package:quran_app/Utils/ColorsUtils.dart';
 import 'package:quran_app/Utils/TextUtils.dart';
 
@@ -56,19 +57,29 @@ class StartingPage extends StatelessWidget {
                   bottom: 0,
                   left: 80,
                   right: 80,
-                  child: Container(
-                    height: 51,
-                    decoration: BoxDecoration(
-                        color: ColorUtils.warna_text,
-                        borderRadius: BorderRadius.circular(40)),
-                    child: Center(
-                      child: Text(
-                        'Mulai !',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins().copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0XFFDAD0E1)),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                          // ignore: prefer_const_constructors
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ));
+                    },
+                    child: Container(
+                      height: 51,
+                      decoration: BoxDecoration(
+                          color: ColorUtils.warna_text,
+                          borderRadius: BorderRadius.circular(40)),
+                      child: Center(
+                        child: Text(
+                          'Mulai !',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins().copyWith(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0XFFDAD0E1)),
+                        ),
                       ),
                     ),
                   ),
