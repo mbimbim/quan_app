@@ -2,10 +2,14 @@
 
 import 'dart:convert';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quran_app/Models/Model_DetailSurah.dart';
 import 'package:quran_app/Models/Model_ObjekDetaialSurah.dart';
 import 'package:quran_app/Models/Model_Surah.dart';
+import 'package:quran_app/Providers/Provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../Models/Model_Android.dart';
 import '../Models/Model_Doa.dart';
 import 'LinkApi.dart';
 import 'package:http/http.dart' as http;
@@ -27,6 +31,7 @@ class ApiServices_new {
   String latin_doa = "";
   String idn_Doa = "";
   String tentang_doa = "";
+
   getDetailDoa(int id) async {
     var url = Uri.parse("${LinkApi.Link}doa/$id");
     var response = await http.get(url);
@@ -45,6 +50,7 @@ class ApiServices_new {
   }
 
   Future<List<Model_DetailSurah>> getDetailSurah(int id) async {
+    final test = Providersss();
     var url = Uri.parse("${LinkApi.Link}surat/$id");
     var response = await http.get(url);
 
@@ -61,6 +67,7 @@ class ApiServices_new {
       detailsurah_model =
           (data).map((e) => Model_DetailSurah.fromJson(e)).toList();
 
+      test.testjuga2();
       return detailsurah_model;
     } else {
       print("gagal");

@@ -2,7 +2,9 @@
 
 import 'dart:async';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quran_app/Models/Model_Doa.dart';
@@ -12,9 +14,14 @@ import 'package:quran_app/Pages/surah.dart';
 import 'package:quran_app/Providers/Provider.dart';
 import 'package:quran_app/Utils/ColorsUtils.dart';
 import 'package:quran_app/Utils/TextUtils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'Detal_Surah.dart';
 
 class HomePage extends ConsumerStatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  String nowa;
+  HomePage({Key? key, required this.nowa}) : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
@@ -23,13 +30,21 @@ class HomePage extends ConsumerStatefulWidget {
 class HomePageState extends ConsumerState<HomePage> {
   late Future<List<Model_Surah>> _surahListFuture;
   String _searchQuery = '';
+  int lastVerse = 0;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     //   aaa.getdataDoa();
     final getProviderss = ref.watch(authControllerProvider);
     // final getProviderSurah = ref.watch(ApiProviderSurah(""));
-    final getProviderDoa = ref.watch(ApiProviderDoa);
+    //final getProviderDoa = ref.watch(ApiProviderDoa);
+    //  getProviderss.getLastReadVerse();
+    print("geett " + getProviderss.lastVerse.toString());
     return Scaffold(
       backgroundColor: ColorUtils.primaryColor,
       appBar: AppBar(
@@ -38,10 +53,15 @@ class HomePageState extends ConsumerState<HomePage> {
         //create CircleImage and NameW
         title: Row(
           children: [
-            Image.asset(
-              'assets/images/icon_slide.png',
-              width: 21,
-              height: 15,
+            InkWell(
+              onTap: () {
+                Modal_Credit(context);
+              },
+              child: Image.asset(
+                'assets/images/icon_slide.png',
+                width: 21,
+                height: 15,
+              ),
             ),
             const SizedBox(width: 20),
             //RichText
@@ -56,7 +76,7 @@ class HomePageState extends ConsumerState<HomePage> {
             //Create menu
             Container(
               width: MediaQuery.of(context).size.width / 2,
-              height: 30,
+              height: 40,
               decoration: BoxDecoration(
                 color: ColorUtils.secondaryColor,
                 borderRadius: BorderRadius.circular(20),
@@ -66,6 +86,8 @@ class HomePageState extends ConsumerState<HomePage> {
                   setState(() {
                     _searchQuery = value.toLowerCase();
                   });
+
+                  // getProviderss.getLastReadVerse();
                 },
                 decoration: InputDecoration(
                   border: InputBorder.none,
@@ -110,7 +132,7 @@ class HomePageState extends ConsumerState<HomePage> {
               child: Row(
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Row(
                         children: [
@@ -123,22 +145,73 @@ class HomePageState extends ConsumerState<HomePage> {
                             width: 20,
                           ),
                           Text(
-                            'Terakhir dibaca',
+                            'Terakhir dibaca :',
                             style: TextUtils.text_13_2,
                           )
                         ],
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
-                      Text(
-                        'Al - Fatiha',
-                        style: TextUtils.text_14_2,
-                      ),
-                      Text(
-                        'Ayat no. 1',
-                        style: TextUtils.text_11,
-                      ),
+                      getProviderss.lastVerse != 0
+                          ? GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DetailSurah(
+                                            terakhir_baca: true,
+                                            nomorSurah: getProviderss
+                                                .nomor_surah
+                                                .toString(),
+                                            namaSurah:
+                                                getProviderss.nama_surah)));
+                              },
+                              child: getProviderss.lastVerse != 0
+                                  ? Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              style: BorderStyle.solid,
+                                              width: 1,
+                                              color: ColorUtils.warna_icon)),
+                                      child: Row(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Text(
+                                                getProviderss.nama_surah,
+                                                style: TextUtils.text_14_2,
+                                              ),
+                                              Text(
+                                                'Ayat ke : ' +
+                                                    (getProviderss.lastVerse +
+                                                            1)
+                                                        .toString(),
+                                                style: TextUtils.text_11,
+                                              ),
+                                              Text(
+                                                'Surah nommor. ${getProviderss.nomor_surah}',
+                                                style: TextUtils.text_11,
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Icon(
+                                            Icons.arrow_circle_right_sharp,
+                                            size: 30,
+                                            color: ColorUtils.warna_icon,
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  : Container(),
+                            )
+                          : Container(),
                     ],
                   ),
                   const Spacer(),
@@ -241,6 +314,7 @@ class HomePageState extends ConsumerState<HomePage> {
                     }
                   },
                 ),
+
                 // getProviderDoa.when(
                 //   data: (data) {
                 //     return ListView.builder(
@@ -320,11 +394,111 @@ class HomePageState extends ConsumerState<HomePage> {
           ),
         ),
       ));
-      print('selectednya $selected');
     }
 
     return Row(
       children: tabss,
     );
+  }
+
+  Future<void> Modal_Credit(BuildContext context) async {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (context) {
+          //   Navigator.of(context).pop(hide);
+
+          return FadeIn(
+            delay: Duration(seconds: 1),
+            animate: true,
+            child: AlertDialog(
+              content: Container(
+                height: 200,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FadeInUp(
+                        delay: Duration(seconds: 2),
+                        animate: true,
+                        child: const Text("Info Develeloper !")),
+                    // Image.asset(
+                    //   'assets/image/logo.jpg',
+                    //   width: 110,
+                    //   height: 60,
+                    //   fit: BoxFit.fill,
+                    // ),
+                    // SizedBox(
+                    //   height: 30,
+                    // ),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    FadeInLeft(
+                      delay: Duration(seconds: 3),
+                      animate: true,
+                      child: Text(
+                        "Nama : Bima Pratama",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins()
+                            .copyWith(fontSize: 15, color: Colors.black),
+                      ),
+                    ),
+                    FadeInRight(
+                      delay: Duration(seconds: 4),
+                      animate: true,
+                      child: Text(
+                        "email : pratamabima03@gmail.com",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins()
+                            .copyWith(fontSize: 15, color: Colors.black),
+                      ),
+                    ),
+                    FadeInDown(
+                      delay: Duration(seconds: 5),
+                      animate: true,
+                      child: Text(
+                        "NoHp/Wa : 0${widget.nowa}",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins()
+                            .copyWith(fontSize: 15, color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    FadeInDown(
+                        delay: Duration(seconds: 5),
+                        animate: true,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              _launchURL();
+                              Navigator.pop(context);
+                            },
+                            child: Text("Whatsapp"))),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  _launchURL() async {
+    final String phoneNumber = widget.nowa; // Ganti dengan nomor telepon tujuan
+    final String message =
+        'Halo, saya ingin Custom Aplikasi!'; // Teks pesan yang ingin ditambahkan
+
+    final String url =
+        'whatsapp://send?phone=+62$phoneNumber&text=${Uri.encodeFull(message)}';
+
+    //  final url = "whatsapp://send?phone=+62$phoneNumber&text=asdadasdadad";
+
+    await launchUrl(Uri.parse(url));
+    // if (await canLaunchUrl(Uri.parse(url))) {
+    //   await launchUrl(Uri.parse(url));
+    // } else {
+    //   throw 'Could not launch $url';
+    // }
   }
 }

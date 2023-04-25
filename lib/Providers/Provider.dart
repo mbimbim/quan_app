@@ -10,7 +10,9 @@ import 'package:http/http.dart' as http;
 import 'package:quran_app/Models/Model_Doa.dart';
 import 'package:quran_app/Pages/surah.dart';
 import 'package:quran_app/Providers/LinkApi.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Models/Model_Android.dart';
 import '../Models/Model_DetailSurah.dart';
 import '../Models/Model_Surah.dart';
 import 'ApiProvider.dart';
@@ -24,6 +26,20 @@ class Tab {
 
 final tembakApi = Provider.autoDispose<ApiServices_new>((ref) {
   return ApiServices_new(); // declared elsewhere
+});
+
+final ApiProviderTerakhirDibaca = FutureProvider.autoDispose<String>((ref) {
+  // get repository from the provider below
+  final tembakApiRepository = ref.watch(authControllerProvider);
+
+  return tembakApiRepository.getLastReadVerse();
+});
+
+final ApiProviderCekAndroid = FutureProvider.autoDispose<Data_Android>((ref) {
+  // get repository from the provider below
+  final tembakApiRepository = ref.watch(authControllerProvider);
+
+  return tembakApiRepository.getDataFromAPI();
 });
 
 final ApiProviderDetailSurah = FutureProvider.family
@@ -144,6 +160,7 @@ class Providersss extends ChangeNotifier {
   int numPages = 0;
   String okepunya = "Mantap";
   List<Model_Surah> surah_model = [];
+  late Data_Android data_android_model;
   List<Model_Doa> doa_model = [];
   AudioPlayer audioPlayer = AudioPlayer();
 
@@ -151,55 +168,97 @@ class Providersss extends ChangeNotifier {
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
 
+  int testjuga = 0;
+
   String nama_doa = "";
   String arab_doa = "";
   String latin_doa = "";
   String idn_Doa = "";
   String tentang_doa = "";
 
+  int lastVerse = 0;
+  String nama_surah = "";
+  int nomor_surah = 0;
   var counter = 1;
 
-  void reverseLogic() {
-    if (counter == 1) {
-      counter = 2;
-    } else {
-      counter = 1;
-    }
+  void testjuga2() {
+    testjuga = 1;
     notifyListeners();
   }
 
-  void changeIsPlaying() async {
+  void togglePlayStop(String url) {
     if (isPlaying == false) {
-      await audioPlayer.play(
-          "https://equran.nos.wjv-1.neo.id/audio-full/Misyari-Rasyid-Al-Afasi/001.mp3");
+      play(url);
       isPlaying = true;
     } else {
-      await audioPlayer.stop();
+      pause();
       isPlaying = false;
     }
-
-    print('isplying $isPlaying');
-
     notifyListeners();
   }
 
-  void changeDuration() {
-    audioPlayer.onAudioPositionChanged.listen((event) {
+  Future<void> play(String url) async {
+    await audioPlayer.play(url).then((value) => isPlaying);
+    notifyListeners();
+  }
+
+  Future<void> pause() async {
+    await audioPlayer.pause();
+    notifyListeners();
+  }
+
+  Future<void> resume() async {
+    await audioPlayer.resume();
+    notifyListeners();
+  }
+
+  Future<void> stop() async {
+    await audioPlayer.stop();
+    audioPlayer.seek(Duration.zero);
+    isPlaying = false;
+    notifyListeners();
+  }
+
+  Future<void> seek(Duration position) async {
+    await audioPlayer.seek(position);
+    notifyListeners();
+  }
+
+  void sss() async {
+    await audioPlayer.onPlayerStateChanged.listen((event) {
+      isPlaying = event == PlayerState.PLAYING;
+      print("value isssplaying $isPlaying");
+      if (event == PlayerState.PLAYING) {
+        isPlaying = true;
+      } else {
+        isPlaying = false;
+      }
+      notifyListeners();
+    });
+
+    await audioPlayer.onDurationChanged.listen((event) {
       duration = event;
+      notifyListeners();
     });
-    notifyListeners();
-  }
 
-  void changePosition() {
-    audioPlayer.onAudioPositionChanged.listen((event) {
+    await audioPlayer.onAudioPositionChanged.listen((event) {
       position = event;
+      notifyListeners();
     });
-    notifyListeners();
+
+    await audioPlayer.onPlayerCompletion.listen((event) {
+      audioPlayer.seek(Duration.zero);
+      // print("selseai");
+
+      isPlaying = false;
+      audioPlayer.stop();
+      notifyListeners();
+    });
   }
 
   List<Tab> tabs = [
     Tab('Surah', Icons.local_shipping_outlined),
-    Tab('Kumpulan Doa', Icons.payment),
+    Tab('Doa', Icons.payment),
   ];
 
   nextPage() async {
@@ -268,7 +327,7 @@ class Providersss extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       surah_model = (data).map((e) => Model_Surah.fromJson(e)).toList();
-
+      print("okeeesurah " + data.toString());
       return surah_model;
 
       // return surah_model =
@@ -283,6 +342,52 @@ class Providersss extends ChangeNotifier {
 
       return [];
     }
+  }
+
+  Future<Data_Android> getDataFromAPI() async {
+    final response = await http
+        .post(Uri.parse('https://alquran.gadroen.com/cek_android.php'));
+    if (response.statusCode == 200) {
+      print("okokokoko");
+      var jsonData = jsonDecode(response.body);
+      Data_Android asda = Data_Android();
+      asda = Data_Android.fromJson(jsonData);
+      print("bbbbb " + asda.versiAndroid.toString());
+      notifyListeners();
+      return Data_Android.fromJson(jsonData);
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  getLastReadVerse() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    lastVerse = prefs.getInt('last_verse') ?? 0;
+    nama_surah = prefs.getString('nama_surah') ?? "";
+    nomor_surah = prefs.getInt('nomor_surah') ?? 0;
+    // lastVerse = 122;
+    // nama_surah = "cobaaa";
+    notifyListeners();
+  }
+
+  saveLastReadVerse(
+      String nama_surahs, int verseNumber, int nomor_surahs) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('nama_surah', nama_surahs);
+    await prefs.setInt('last_verse', verseNumber);
+    await prefs.setInt('nomor_surah', nomor_surahs);
+    lastVerse = prefs.getInt('last_verse') ?? 0;
+    nomor_surah = prefs.getInt('nomor_surah') ?? 0;
+    nama_surah = prefs.getString('nama_surah') ?? "";
+    notifyListeners();
+  }
+
+  Remove() {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.remove('last_verse');
+      prefs.remove('nama_surah');
+    });
   }
 
   @override

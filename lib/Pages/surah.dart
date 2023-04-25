@@ -26,22 +26,19 @@ class Surah extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    return Container(
-        child: GestureDetector(
+    return GestureDetector(
       onTap: () {
-        // ref.read(ApiProviderSurah(nomorSurah)).whenData((value) {
-        //   Navigator.push(context,
-        //       MaterialPageRoute(builder: (context) => const DetailSurah()));
-        // });
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => DetailSurah(
+                      terakhir_baca: false,
                       nomorSurah: nomorSurah,
                       namaSurah: nama_latin,
                     )));
       },
-      child: Column(
+      child: Container(
+          child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -87,7 +84,7 @@ class Surah extends ConsumerWidget {
             color: ColorUtils.secondaryColor,
           )
         ],
-      ),
-    ));
+      )),
+    );
   }
 }
