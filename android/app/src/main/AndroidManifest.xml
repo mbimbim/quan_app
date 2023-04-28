@@ -3,9 +3,9 @@
     <uses-permission android:name="android.permission.INTERNET" /> 
    <application
      android:usesCleartextTraffic="true"
-        android:label="quran_app"
+        android:label="Al-Qur'an"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/icon_quran">
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -13,11 +13,13 @@ import 'Detail_Surah2.dart';
 class DetailSurah extends ConsumerStatefulWidget {
   String nomorSurah;
   String namaSurah;
+  String namaSurah_no;
   bool terakhir_baca;
   DetailSurah(
       {Key? key,
       required this.nomorSurah,
       required this.namaSurah,
+      required this.namaSurah_no,
       required this.terakhir_baca})
       : super(key: key);
 
@@ -48,6 +50,12 @@ class DetailSurahState extends ConsumerState<DetailSurah> {
 
   @override
   void initState() {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   // kode untuk mendapatkan data
+    //   // itemScrollController.scrollTo(
+    //   //     index: 6, duration: const Duration(seconds: 1));
+    //   _scrollToLastVerse(itemScrollController, 4);
+    // });
     // _scrollToItem(6); // fokus pada item nomor 7
     // audioPlayer.onPlayerStateChanged.listen((event) {
     //   setState(() {
@@ -87,7 +95,19 @@ class DetailSurahState extends ConsumerState<DetailSurah> {
     final play_audio = ref.watch(authControllerProvider);
     //final audioPlayer = ref.watch(audioPlayerProvider.notifier);
     //   play_audio.seek(Duration(seconds: 0));
-    play_audio.sss();
+    play_audio.slidergerak();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final trues = Duration(seconds: play_audio.lastVerse == 1 ? 0 : 1);
+      final flases = Duration(seconds: 0);
+      // kode untuk mendapatkan data
+      // itemScrollController.scrollTo(
+      //     index: 6, duration: const Duration(seconds: 1));
+
+      widget.terakhir_baca == true
+          ? _scrollToLastVerse(
+              itemScrollController, play_audio.lastVerse, trues)
+          : _scrollToLastVerse(itemScrollController, 1, flases);
+    });
 
     return WillPopScope(
       onWillPop: () {
@@ -109,7 +129,7 @@ class DetailSurahState extends ConsumerState<DetailSurah> {
                 return Future.value(true);
               }),
           title: Text(
-            widget.namaSurah + " " + widget.nomorSurah,
+            "No. " + widget.nomorSurah + "  " + widget.namaSurah,
             style: TextUtils.text_judul,
           ),
         ),
@@ -140,29 +160,31 @@ class DetailSurahState extends ConsumerState<DetailSurah> {
                       const SizedBox(
                         height: 5,
                       ),
-                      widget.terakhir_baca == true
-                          ? GestureDetector(
-                              onTap: () {
-                                itemScrollController.scrollTo(
-                                    index: play_audio.lastVerse - 1,
-                                    duration: const Duration(seconds: 1));
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: ColorUtils.warna_icon,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        width: 1,
-                                        color: ColorUtils.secondaryColor)),
-                                child: Text(
-                                  'Pergi ke terakhir baca',
-                                  style: GoogleFonts.poppins().copyWith(
-                                      fontSize: 12, color: Colors.white),
-                                ),
-                              ),
-                            )
-                          : Container()
+                      // widget.terakhir_baca == true
+                      //     ? GestureDetector(
+                      //         onTap: () {
+                      //           // _scrollToLastVerse(
+                      //           //     itemScrollController, play_audio.lastVerse);
+                      //           // itemScrollController.scrollTo(
+                      //           //     index: play_audio.lastVerse - 1,
+                      //           //     duration: const Duration(seconds: 1));
+                      //         },
+                      //         child: Container(
+                      //           padding: const EdgeInsets.all(10),
+                      //           decoration: BoxDecoration(
+                      //               color: ColorUtils.warna_icon,
+                      //               borderRadius: BorderRadius.circular(10),
+                      //               border: Border.all(
+                      //                   width: 1,
+                      //                   color: ColorUtils.secondaryColor)),
+                      //           child: Text(
+                      //             'Pergi ke terakhir baca',
+                      //             style: GoogleFonts.poppins().copyWith(
+                      //                 fontSize: 12, color: Colors.white),
+                      //           ),
+                      //         ),
+                      //       )
+                      //     : Container()
                     ],
                   ),
                   const Spacer(),
@@ -303,6 +325,14 @@ class DetailSurahState extends ConsumerState<DetailSurah> {
         //       duration: Duration(microseconds: 2000));
         // }),
       ),
+    );
+  }
+
+  void _scrollToLastVerse(ItemScrollController itemScrollController,
+      int lastVerse, Duration duration) {
+    itemScrollController.scrollTo(
+      index: lastVerse - 1,
+      duration: duration,
     );
   }
 }

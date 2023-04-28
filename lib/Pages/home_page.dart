@@ -17,6 +17,7 @@ import 'package:quran_app/Utils/TextUtils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../Providers/Providers_android.dart';
 import 'Detal_Surah.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -30,7 +31,8 @@ class HomePage extends ConsumerStatefulWidget {
 class HomePageState extends ConsumerState<HomePage> {
   late Future<List<Model_Surah>> _surahListFuture;
   String _searchQuery = '';
-  int lastVerse = 0;
+//  int lastVerse = 0;
+  final provider2 = Providers2();
   @override
   void initState() {
     // TODO: implement initState
@@ -40,11 +42,12 @@ class HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     //   aaa.getdataDoa();
-    final getProviderss = ref.watch(authControllerProvider);
+    final getProviderss = ref.watch(authControllerProvider.notifier);
     // final getProviderSurah = ref.watch(ApiProviderSurah(""));
     //final getProviderDoa = ref.watch(ApiProviderDoa);
-    //  getProviderss.getLastReadVerse();
-    print("geett " + getProviderss.lastVerse.toString());
+    final sharedPreferences = ref.watch(sharedPreferencesProvider);
+
+    // print("geett " + getProviderss.lastVerse.toString());
     return Scaffold(
       backgroundColor: ColorUtils.primaryColor,
       appBar: AppBar(
@@ -153,60 +156,144 @@ class HomePageState extends ConsumerState<HomePage> {
                       const SizedBox(
                         height: 10,
                       ),
-                      getProviderss.lastVerse > 0
-                          ? GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DetailSurah(
-                                            terakhir_baca: true,
-                                            nomorSurah: getProviderss
-                                                .nomor_surah
-                                                .toString(),
-                                            namaSurah:
-                                                getProviderss.nama_surah)));
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        style: BorderStyle.solid,
-                                        width: 1,
-                                        color: ColorUtils.warna_icon)),
-                                child: Row(
-                                  children: [
-                                    Column(
+
+                      sharedPreferences.when(
+                        data: (data) {
+                          // int lastVerse = 0;
+                          // String nama_surah = "";
+                          // int nomor_surah = 0;
+
+                          getProviderss.lastVerse =
+                              data.getInt('last_verse') ?? 0;
+                          getProviderss.nama_surah =
+                              data.getString('nama_surah') ?? "";
+                          getProviderss.nomor_surah =
+                              data.getInt('nomor_surah') ?? 0;
+                          return getProviderss.lastVerse > 0
+                              ? GestureDetector(
+                                  onTap: () {
+                                    // print("antar " +
+                                    //     nomor_surah.toString() +
+                                    //     nama_surah);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => DetailSurah(
+                                                namaSurah_no: getProviderss
+                                                    .nomor_surah
+                                                    .toString(),
+                                                terakhir_baca: true,
+                                                nomorSurah: getProviderss
+                                                    .nomor_surah
+                                                    .toString(),
+                                                namaSurah:
+                                                    getProviderss.nama_surah)));
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            style: BorderStyle.solid,
+                                            width: 1,
+                                            color: ColorUtils.warna_icon)),
+                                    child: Row(
                                       children: [
-                                        Text(
-                                          getProviderss.nama_surah,
-                                          style: TextUtils.text_14_2,
+                                        Column(
+                                          children: [
+                                            Text(
+                                              getProviderss.nama_surah,
+                                              style: TextUtils.text_14_2,
+                                            ),
+                                            Text(
+                                              'Ayat ke : ${getProviderss.lastVerse}',
+                                              style: TextUtils.text_11,
+                                            ),
+                                            Text(
+                                              'Surah nomor : ${getProviderss.nomor_surah}',
+                                              style: TextUtils.text_11,
+                                            ),
+                                          ],
                                         ),
-                                        Text(
-                                          'Ayat ke : ' +
-                                              (getProviderss.lastVerse)
-                                                  .toString(),
-                                          style: TextUtils.text_11,
+                                        const SizedBox(
+                                          width: 10,
                                         ),
-                                        Text(
-                                          'Surah nommor. ${getProviderss.nomor_surah}',
-                                          style: TextUtils.text_11,
-                                        ),
+                                        Icon(
+                                          Icons.arrow_circle_right_sharp,
+                                          size: 30,
+                                          color: ColorUtils.warna_icon,
+                                        )
                                       ],
                                     ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Icon(
-                                      Icons.arrow_circle_right_sharp,
-                                      size: 30,
-                                      color: ColorUtils.warna_icon,
-                                    )
-                                  ],
-                                ),
-                              ))
-                          : Container(),
+                                  ))
+                              : Container();
+                        },
+                        error: (error, stackTrace) => Text("errror"),
+                        loading: () => const CircularProgressIndicator(),
+                      )
+
+                      // if (snapshot.hasData) {
+                      //   print('kkkkkkk $provider2.lastVerse');
+                      // getProviderss.lastVerse > 0
+                      //     ? GestureDetector(
+                      //         onTap: () {
+                      //           Navigator.push(
+                      //               context,
+                      //               MaterialPageRoute(
+                      //                   builder: (context) => DetailSurah(
+                      //                       terakhir_baca: true,
+                      //                       nomorSurah: getProviderss
+                      //                           .nomor_surah
+                      //                           .toString(),
+                      //                       namaSurah:
+                      //                           getProviderss.nama_surah)));
+                      //         },
+                      //         child: Container(
+                      //           padding: const EdgeInsets.all(10),
+                      //           decoration: BoxDecoration(
+                      //               borderRadius: BorderRadius.circular(10),
+                      //               border: Border.all(
+                      //                   style: BorderStyle.solid,
+                      //                   width: 1,
+                      //                   color: ColorUtils.warna_icon)),
+                      //           child: Row(
+                      //             children: [
+                      //               Column(
+                      //                 children: [
+                      //                   Text(
+                      //                     getProviderss.nama_surah,
+                      //                     style: TextUtils.text_14_2,
+                      //                   ),
+                      //                   Text(
+                      //                     'Ayat ke : ' +
+                      //                         (getProviderss.lastVerse)
+                      //                             .toString(),
+                      //                     style: TextUtils.text_11,
+                      //                   ),
+                      //                   Text(
+                      //                     'Surah nommor. ${getProviderss.nomor_surah}',
+                      //                     style: TextUtils.text_11,
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //               const SizedBox(
+                      //                 width: 10,
+                      //               ),
+                      //               Icon(
+                      //                 Icons.arrow_circle_right_sharp,
+                      //                 size: 30,
+                      //                 color: ColorUtils.warna_icon,
+                      //               )
+                      //             ],
+                      //           ),
+                      //         ))
+                      //     : Container()
+                      // } else {
+                      //   return Text(
+                      //     'Belum ada',
+                      //     style: TextUtils.text_13_2,
+                      //   );
+                      // }
                     ],
                   ),
                   const Spacer(),
@@ -252,6 +339,8 @@ class HomePageState extends ConsumerState<HomePage> {
                             jumlah_ayat: surahList[index].jumlahAyat!,
                             nama: surahList[index].nama!,
                             nama_latin: surahList[index].namaLatin!,
+                            nama_latin_no:
+                                "${surahList[index].nomor}. ${surahList[index].namaLatin!}",
                             nomorSurah: surahList[index].nomor.toString(),
                             tempat_turun: surahList[index].tempatTurun!,
                           );

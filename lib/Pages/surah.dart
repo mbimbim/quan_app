@@ -13,6 +13,7 @@ class Surah extends ConsumerWidget {
   final String nomorSurah;
   final String nama;
   final String nama_latin;
+  final String nama_latin_no;
   final int jumlah_ayat;
   final String tempat_turun;
   const Surah(
@@ -21,7 +22,8 @@ class Surah extends ConsumerWidget {
       required this.nama,
       required this.nama_latin,
       required this.jumlah_ayat,
-      required this.tempat_turun})
+      required this.tempat_turun,
+      required this.nama_latin_no})
       : super(key: key);
 
   @override
@@ -35,6 +37,7 @@ class Surah extends ConsumerWidget {
                       terakhir_baca: false,
                       nomorSurah: nomorSurah,
                       namaSurah: nama_latin,
+                      namaSurah_no: nama_latin_no,
                     )));
       },
       child: Container(
@@ -50,7 +53,7 @@ class Surah extends ConsumerWidget {
                     height: 10,
                   ),
                   Text(
-                    nama_latin,
+                    nama_latin_no,
                     style: TextUtils.text_14_2,
                   ),
                   const SizedBox(

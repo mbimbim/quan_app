@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../Models/Model_Android.dart';
@@ -24,6 +25,9 @@ class Providers2 extends ChangeNotifier {
   String versi = "";
   bool status_mulai = false;
 
+  int lastVerse = 0;
+  String nama_surah = "";
+  int nomor_surah = 0;
   void versss() async {
     WidgetsFlutterBinding.ensureInitialized();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -35,6 +39,21 @@ class Providers2 extends ChangeNotifier {
     //   notifyListeners();
     //   print(versi);
     // });
+  }
+
+  Future getLastReadsVerse() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    lastVerse = prefs.getInt('last_verse') ?? 0;
+    nama_surah = prefs.getString('nama_surah') ?? "";
+    nomor_surah = prefs.getInt('nomor_surah') ?? 0;
+
+    // ignore: prefer_interpolation_to_compose_strings
+    print("namasurah1 " + nama_surah);
+    print("nomor_surah1 " + nomor_surah.toString());
+    print("lastVerse1 " + lastVerse.toString());
+    // lastVerse = 122;
+    // nama_surah = "cobaaa";
+    notifyListeners();
   }
 
   Future<Data_Android> getDataFromAPI(BuildContext context) async {

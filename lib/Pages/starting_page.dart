@@ -42,6 +42,7 @@ class StartingPageState extends ConsumerState<StartingPage> {
 
   @override
   Widget build(BuildContext context) {
+    // final helloWorld = ref.watch(ApiProviderTerakhirDibacas);
     //final aaa = ref.watch(ApiProviderTerakhirDibaca);
     //   final aaa = ref.watch(ApiProviderCekAndroid);
     return Scaffold(

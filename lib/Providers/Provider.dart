@@ -28,11 +28,22 @@ final tembakApi = Provider.autoDispose<ApiServices_new>((ref) {
   return ApiServices_new(); // declared elsewhere
 });
 
-// final ApiProviderTerakhirDibaca = FutureProvider.autoDispose<String>((ref) {
-//   // get repository from the provider below
-//   final tembakApiRepository = ref.watch(authControllerProvider);
+final sharedPreferencesProvider =
+    FutureProvider<SharedPreferences>((ref) async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  return sharedPreferences;
+});
 
-//   return tembakApiRepository.getLastReadVerse();
+final ApiProviderTerakhirDibacas = FutureProvider<String>((ref) {
+  // get repository from the provider below
+  final tembakApiRepository = ref.read(authControllerProvider);
+
+  return tembakApiRepository.getLastReadsVerse();
+});
+
+// final ApiProviderTerakhirDibaca =
+//     ChangeNotifierProvider<Provider_terakhirBaca>((ref) {
+//   return Provider_terakhirBaca();
 // });
 
 final ApiProviderCekAndroid = FutureProvider.autoDispose<Data_Android>((ref) {
@@ -224,7 +235,7 @@ class Providersss extends ChangeNotifier {
     notifyListeners();
   }
 
-  void sss() async {
+  void slidergerak() async {
     await audioPlayer.onPlayerStateChanged.listen((event) {
       isPlaying = event == PlayerState.PLAYING;
       print("value isssplaying $isPlaying");
@@ -403,5 +414,26 @@ class Providersss extends ChangeNotifier {
     super.dispose();
     audioPlayer.dispose();
     pageController.dispose(); // Dis
+  }
+}
+
+class Provider_terakhirBaca extends ChangeNotifier {
+  int lastVerse = 0;
+  String nama_surah = "";
+  int nomor_surah = 0;
+
+  getLastReadsVerse() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    lastVerse = prefs.getInt('last_verse') ?? 0;
+    nama_surah = prefs.getString('nama_surah') ?? "";
+    nomor_surah = prefs.getInt('nomor_surah') ?? 0;
+
+    // ignore: prefer_interpolation_to_compose_strings
+    print("namasurah1 " + nama_surah);
+    print("nomor_surah1 " + nomor_surah.toString());
+    print("lastVerse1 " + lastVerse.toString());
+    // lastVerse = 122;
+    // nama_surah = "cobaaa";
+    notifyListeners();
   }
 }
