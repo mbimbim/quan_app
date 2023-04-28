@@ -28,7 +28,7 @@ class StartingPageState extends ConsumerState<StartingPage> {
   final provider2 = Providers2();
   @override
   void initState() {
-    provider2.getDataFromAPI(context);
+    // provider2.getDataFromAPI(context);
 
     // TODO: implement initState
     super.initState();
@@ -42,7 +42,8 @@ class StartingPageState extends ConsumerState<StartingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final aaa = ref.watch(ApiProviderTerakhirDibaca);
+    //final aaa = ref.watch(ApiProviderTerakhirDibaca);
+    //   final aaa = ref.watch(ApiProviderCekAndroid);
     return Scaffold(
       backgroundColor: ColorUtils.primaryColor,
       body: Center(
@@ -89,8 +90,11 @@ class StartingPageState extends ConsumerState<StartingPage> {
                     bottom: 0,
                     left: 80,
                     right: 80,
-                    child: provider2.status_mulai == true
-                        ? GestureDetector(
+                    child: FutureBuilder(
+                      future: provider2.getDataFromAPI(context),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return GestureDetector(
                             onTap: () {
                               Navigator.pushReplacement(
                                   // ignore: prefer_const_constructors
@@ -116,8 +120,42 @@ class StartingPageState extends ConsumerState<StartingPage> {
                                 ),
                               ),
                             ),
-                          )
-                        : const Center(child: CircularProgressIndicator()))
+                          );
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                      },
+                    ))
+                // provider2.status_mulai == true
+                //     ? GestureDetector(
+                //         onTap: () {
+                //           Navigator.pushReplacement(
+                //               // ignore: prefer_const_constructors
+                //               context,
+                //               MaterialPageRoute(
+                //                 builder: (context) =>
+                //                     HomePage(nowa: provider2.nowa),
+                //               ));
+                //         },
+                //         child: Container(
+                //           height: 51,
+                //           decoration: BoxDecoration(
+                //               color: ColorUtils.warna_text,
+                //               borderRadius: BorderRadius.circular(40)),
+                //           child: Center(
+                //             child: Text(
+                //               'Mulai !',
+                //               textAlign: TextAlign.center,
+                //               style: GoogleFonts.poppins().copyWith(
+                //                   fontSize: 18,
+                //                   fontWeight: FontWeight.w600,
+                //                   color: const Color(0XFFDAD0E1)),
+                //             ),
+                //           ),
+                //         ),
+                //       )
+                //     : const Center(child: CircularProgressIndicator()))
               ],
             )
           ],

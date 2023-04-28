@@ -33,6 +33,7 @@ class Detail_surah2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final savedata = ref.watch(authControllerProvider);
+
     return Container(
       // color: Colors.amber,
       width: MediaQuery.of(context).size.width,
@@ -104,8 +105,8 @@ class Detail_surah2 extends StatelessWidget {
                 switch (value) {
                   case 'menu1':
                     // Action for menu 1
-                    //  print('kamu pilih nomo1 $no, $nomor_surah, $surah');
-                    savedata.saveLastReadVerse(surah, no - 1, nomor_surah);
+                    print('kamu pilih nomo $surah, $no, $nomor_surah');
+                    savedata.saveLastReadVerse(surah, no, nomor_surah);
                     break;
                   case 'menu2':
                     Share.share("$ayat\n\n$ayat_indo\n\nartinya:\n$artinya");

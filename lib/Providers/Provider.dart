@@ -28,12 +28,12 @@ final tembakApi = Provider.autoDispose<ApiServices_new>((ref) {
   return ApiServices_new(); // declared elsewhere
 });
 
-final ApiProviderTerakhirDibaca = FutureProvider.autoDispose<String>((ref) {
-  // get repository from the provider below
-  final tembakApiRepository = ref.watch(authControllerProvider);
+// final ApiProviderTerakhirDibaca = FutureProvider.autoDispose<String>((ref) {
+//   // get repository from the provider below
+//   final tembakApiRepository = ref.watch(authControllerProvider);
 
-  return tembakApiRepository.getLastReadVerse();
-});
+//   return tembakApiRepository.getLastReadVerse();
+// });
 
 final ApiProviderCekAndroid = FutureProvider.autoDispose<Data_Android>((ref) {
   // get repository from the provider below
@@ -360,11 +360,16 @@ class Providersss extends ChangeNotifier {
     }
   }
 
-  getLastReadVerse() async {
+  getLastReadsVerse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     lastVerse = prefs.getInt('last_verse') ?? 0;
     nama_surah = prefs.getString('nama_surah') ?? "";
     nomor_surah = prefs.getInt('nomor_surah') ?? 0;
+
+    // ignore: prefer_interpolation_to_compose_strings
+    print("namasurah1 " + nama_surah);
+    print("nomor_surah1 " + nomor_surah.toString());
+    print("lastVerse1 " + lastVerse.toString());
     // lastVerse = 122;
     // nama_surah = "cobaaa";
     notifyListeners();
@@ -380,6 +385,8 @@ class Providersss extends ChangeNotifier {
     lastVerse = prefs.getInt('last_verse') ?? 0;
     nomor_surah = prefs.getInt('nomor_surah') ?? 0;
     nama_surah = prefs.getString('nama_surah') ?? "";
+
+    // getLastReadsVerse();
     notifyListeners();
   }
 

@@ -144,7 +144,7 @@ class DetailSurahState extends ConsumerState<DetailSurah> {
                           ? GestureDetector(
                               onTap: () {
                                 itemScrollController.scrollTo(
-                                    index: play_audio.lastVerse,
+                                    index: play_audio.lastVerse - 1,
                                     duration: const Duration(seconds: 1));
                               },
                               child: Container(
@@ -278,7 +278,7 @@ class DetailSurahState extends ConsumerState<DetailSurah> {
                     itemCount: data.length,
                     itemBuilder: (context, index) {
                       return Detail_surah2(
-                        indexx: index,
+                        indexx: index + 1,
                         nomor_surah: int.parse(widget.nomorSurah),
                         surah: widget.namaSurah,
                         ref: ref,

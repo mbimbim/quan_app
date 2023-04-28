@@ -153,7 +153,7 @@ class HomePageState extends ConsumerState<HomePage> {
                       const SizedBox(
                         height: 10,
                       ),
-                      getProviderss.lastVerse != 0
+                      getProviderss.lastVerse > 0
                           ? GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -167,50 +167,45 @@ class HomePageState extends ConsumerState<HomePage> {
                                             namaSurah:
                                                 getProviderss.nama_surah)));
                               },
-                              child: getProviderss.lastVerse != 0
-                                  ? Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                              style: BorderStyle.solid,
-                                              width: 1,
-                                              color: ColorUtils.warna_icon)),
-                                      child: Row(
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Text(
-                                                getProviderss.nama_surah,
-                                                style: TextUtils.text_14_2,
-                                              ),
-                                              Text(
-                                                'Ayat ke : ' +
-                                                    (getProviderss.lastVerse +
-                                                            1)
-                                                        .toString(),
-                                                style: TextUtils.text_11,
-                                              ),
-                                              Text(
-                                                'Surah nommor. ${getProviderss.nomor_surah}',
-                                                style: TextUtils.text_11,
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          Icon(
-                                            Icons.arrow_circle_right_sharp,
-                                            size: 30,
-                                            color: ColorUtils.warna_icon,
-                                          )
-                                        ],
-                                      ),
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        style: BorderStyle.solid,
+                                        width: 1,
+                                        color: ColorUtils.warna_icon)),
+                                child: Row(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Text(
+                                          getProviderss.nama_surah,
+                                          style: TextUtils.text_14_2,
+                                        ),
+                                        Text(
+                                          'Ayat ke : ' +
+                                              (getProviderss.lastVerse)
+                                                  .toString(),
+                                          style: TextUtils.text_11,
+                                        ),
+                                        Text(
+                                          'Surah nommor. ${getProviderss.nomor_surah}',
+                                          style: TextUtils.text_11,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Icon(
+                                      Icons.arrow_circle_right_sharp,
+                                      size: 30,
+                                      color: ColorUtils.warna_icon,
                                     )
-                                  : Container(),
-                            )
+                                  ],
+                                ),
+                              ))
                           : Container(),
                     ],
                   ),
