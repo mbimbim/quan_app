@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:quran_app/Models/BannerAds.dart';
 import 'package:quran_app/Providers/Provider.dart';
 import 'package:quran_app/Utils/ColorsUtils.dart';
 import 'package:quran_app/Utils/TextUtils.dart';
@@ -44,37 +46,37 @@ class DetailSurahState extends ConsumerState<DetailSurah> {
     final contextss = itemKey.currentContext!;
     await Scrollable.ensureVisible(contextss);
   }
-  //final coba = Providersss();
-  // Stream duration = Duration.zero;
-  // Duration position = Duration.zero;
+  
+
+ bool isBannerLoad = false;
+  late BannerAd _bannerAd;
+
+  loadBanner(){
+    _bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-2517022731205460/8009869801',
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          setState(() {
+            isBannerLoad = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          ad.dispose();
+          isBannerLoad = false;
+          print('Ad failed toxx load: $error');
+        },
+      ),
+    );
+    _bannerAd.load();
+  }
+
 
   @override
   void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   // kode untuk mendapatkan data
-    //   // itemScrollController.scrollTo(
-    //   //     index: 6, duration: const Duration(seconds: 1));
-    //   _scrollToLastVerse(itemScrollController, 4);
-    // });
-    // _scrollToItem(6); // fokus pada item nomor 7
-    // audioPlayer.onPlayerStateChanged.listen((event) {
-    //   setState(() {
-    //     isPlaying = event == PlayerState.PLAYING;
-    //   });
 
-    //   audioPlayer.onDurationChanged.listen((event) {
-    //     setState(() {
-    //       duration = event;
-    //     });
-    //   });
-
-    //   audioPlayer.onAudioPositionChanged.listen((event) {
-    //     setState(() {
-    //       position = event;
-    //     });
-    //   });
-    // });
-
+loadBanner();
     // TODO: implement initState
     super.initState();
   }
@@ -115,6 +117,12 @@ class DetailSurahState extends ConsumerState<DetailSurah> {
         return Future.value(true);
       },
       child: Scaffold(
+        bottomNavigationBar: isBannerLoad
+          ? Container(
+              height: 50,
+              child: AdWidget(ad: _bannerAd),
+            )
+          : const SizedBox(),
         backgroundColor: ColorUtils.primaryColor,
         appBar: AppBar(
           backgroundColor: ColorUtils.primaryColor,

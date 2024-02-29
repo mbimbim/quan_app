@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quran_app/Pages/starting_page.dart';
 
 void main() {
+   WidgetsFlutterBinding.ensureInitialized();
+  unawaited(MobileAds.instance.initialize());
   runApp(const ProviderScope(child: MyApp()));
 }
 

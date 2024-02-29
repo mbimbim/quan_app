@@ -50,7 +50,7 @@ class Providers2 extends ChangeNotifier {
     // ignore: prefer_interpolation_to_compose_strings
     print("namasurah1 " + nama_surah);
     print("nomor_surah1 " + nomor_surah.toString());
-    print("lastVerse1 " + lastVerse.toString());
+    print("lastVerse1 " + versi.toString());
     // lastVerse = 122;
     // nama_surah = "cobaaa";
     notifyListeners();
@@ -76,7 +76,7 @@ class Providers2 extends ChangeNotifier {
       print("nowaaaa " + nowa);
 
       if (versi_adnroid != versi) {
-        Modal_Update(context, keterangan, versi_adnroid, link_update);
+        Modal_Update(context, keterangan, versi, link_update);
         status_mulai = false;
       } else if (status == "2") {
         Modal_Maintenance(context, keterangan);

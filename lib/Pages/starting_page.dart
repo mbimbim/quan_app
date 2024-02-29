@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quran_app/Models/Model_Android.dart';
 import 'package:quran_app/Pages/home_page.dart';
@@ -24,8 +25,10 @@ class StartingPage extends ConsumerStatefulWidget {
 class StartingPageState extends ConsumerState<StartingPage> {
   Data_Android asda = Data_Android();
 
+
   final provider = Providersss();
   final provider2 = Providers2();
+  
   @override
   void initState() {
     // provider2.getDataFromAPI(context);
@@ -164,4 +167,6 @@ class StartingPageState extends ConsumerState<StartingPage> {
       ),
     );
   }
+
+
 }
